@@ -9,14 +9,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* --- CSS MODERN UI --- */
         :root {
             --primary-color: #0d6efd; --primary-hover: #0b5ed7;
-            --bg-color: #f4f6f8; --card-bg: #ffffff;
+            --bg-color: #f0f2f5; --card-bg: #ffffff;
             --text-main: #212529; --border-color: #dee2e6;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
         }
 
         body {
@@ -24,109 +26,115 @@
             color: var(--text-main); margin: 0; padding: 20px; line-height: 1.6;
         }
 
-        /* LOGIN OVERLAY (Full Screen) */
+        /* ANIMASI FADE IN */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.6s ease-out forwards; }
+
+        /* LOGIN OVERLAY */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--primary-color), #0043a8);
+            background: linear-gradient(135deg, var(--primary-color), #003585);
             display: flex; justify-content: center; align-items: center;
-            z-index: 9999; backdrop-filter: blur(5px);
+            z-index: 9999; backdrop-filter: blur(8px);
         }
         .login-card {
-            background: white; padding: 40px; border-radius: 16px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 320px;
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25); width: 320px;
+            transform: scale(0.9); animation: fadeIn 0.5s forwards;
         }
-        .login-card h3 { margin-top: 0; color: #333; font-weight: 700; }
         .login-card input { 
-            width: 100%; padding: 12px; margin: 20px 0; border: 2px solid #eee; 
-            border-radius: 8px; font-size: 18px; text-align: center; letter-spacing: 4px; outline: none;
+            width: 100%; padding: 14px; margin: 20px 0; border: 2px solid #eee; 
+            border-radius: 12px; font-size: 18px; text-align: center; letter-spacing: 4px; outline: none; transition: 0.3s;
         }
-        .login-card input:focus { border-color: var(--primary-color); }
+        .login-card input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
         .login-btn {
-            width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; 
-            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; 
+            border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
-        .login-btn:hover { background: var(--primary-hover); }
-        .error-msg { color: #dc3545; margin-top: 15px; font-size: 0.9rem; display: none; font-weight: 600; }
+        .login-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
-        /* UTAMA (Hidden sebelum login) */
+        /* UTAMA */
         #app-container {
             display: none; max-width: 850px; margin: 0 auto; background: var(--card-bg);
-            border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
+            border-radius: 20px; box-shadow: var(--shadow); overflow: hidden;
         }
 
-        /* HEADER MODERN */
+        /* HEADER */
         .app-header {
-            background: linear-gradient(135deg, var(--primary-color), #0043a8);
-            color: white; padding: 30px 20px; text-align: center; position: relative;
+            background: linear-gradient(135deg, var(--primary-color), #0056d6);
+            color: white; padding: 40px 20px; text-align: center; position: relative;
         }
-        
         .logo-area {
-            width: 70px; height: 70px; background: white; border-radius: 50%;
+            width: 80px; height: 80px; background: white; border-radius: 50%;
             margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); overflow: hidden; padding: 5px;
         }
-        .logo-area img { width: 80%; height: auto; object-fit: contain; }
+        .logo-area img { width: 100%; height: 100%; object-fit: contain; }
+        .app-header h2 { margin: 0; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px; }
+        .app-header p { margin: 5px 0 0; opacity: 0.85; font-size: 0.9rem; }
 
-        .app-header h2 { margin: 0; font-weight: 700; font-size: 1.5rem; }
-        .app-header p { margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem; font-weight: 300; }
-
-        /* TOMBOL HEADER (Sync & Logout) */
-        .header-actions { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        /* HEADER BUTTONS */
+        .header-actions { position: absolute; top: 25px; right: 25px; display: flex; gap: 10px; }
         .btn-small {
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: white;
-            border: 1px solid rgba(255,255,255,0.4); border-radius: 30px; padding: 6px 16px;
-            cursor: pointer; font-size: 0.85em; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+            background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); color: white;
+            border: 1px solid rgba(255,255,255,0.3); border-radius: 30px; padding: 8px 18px;
+            cursor: pointer; font-size: 0.85em; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-weight: 500;
         }
-        .btn-small:hover { background: rgba(255,255,255,0.3); }
+        .btn-small:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
         .btn-small.spinning svg { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* FORM STYLE */
-        .form-body { padding: 30px 40px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; color: #344767; font-size: 0.95rem; }
+        /* FORM BODY */
+        .form-body { padding: 40px 50px; }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #344767; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
         
         input, textarea, select {
-            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color);
-            border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem;
-            background-color: #fff;
+            width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0;
+            border-radius: 10px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem;
+            background-color: #fff; transition: 0.3s;
         }
         input:focus, textarea:focus, select:focus { 
             border-color: var(--primary-color); 
-            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15); outline: none; 
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); outline: none; 
         }
-        input[readonly] { background-color: #f8f9fa; cursor: not-allowed; }
+        input[readonly] { background-color: #f8f9fa; cursor: default; color: #6c757d; border-color: #f0f0f0; }
 
+        /* SEARCH BUTTON */
         .input-group { display: flex; gap: 10px; }
         .btn-search {
-            background: #e7f1ff; color: var(--primary-color); border: 1px solid rgba(13, 110, 253, 0.2);
-            border-radius: 8px; padding: 0 20px; cursor: pointer; font-weight: 600; white-space: nowrap;
+            background: #e7f1ff; color: var(--primary-color); border: 1px solid rgba(13, 110, 253, 0.1);
+            border-radius: 10px; padding: 0 25px; cursor: pointer; font-weight: 700; white-space: nowrap; transition: 0.2s;
         }
         .btn-search:hover { background: var(--primary-color); color: white; }
 
-        hr { border: 0; border-top: 1px dashed #ccc; margin: 30px 0; }
-        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; font-weight: 700; margin-bottom: 15px; display: block; }
+        hr { border: 0; border-top: 1px dashed #d0d0d0; margin: 40px 0; }
+        .section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #adb5bd; font-weight: 800; margin-bottom: 20px; display: block; }
 
+        /* SAVE BUTTON */
         .btn-save {
-            width: 100%; background: #198754; color: white; border: none; padding: 15px;
-            border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+            width: 100%; background: linear-gradient(135deg, #198754, #146c43); color: white; border: none; padding: 18px;
+            border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 15px;
+            box-shadow: 0 10px 20px rgba(25, 135, 84, 0.2); transition: 0.3s;
         }
-        .btn-save:hover { background: #157347; transform: translateY(-2px); }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(25, 135, 84, 0.3); }
         .loading { display: none; text-align: center; color: var(--primary-color); margin-top: 15px; font-weight: 600; }
+
+        /* FOOTER */
+        .app-footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.85rem; }
 
         /* FIX SELECT2 */
         .select2-container { width: 100% !important; display: block; }
-        .select2-container .select2-selection--single { height: 46px !important; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; }
-        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 44px !important; }
+        .select2-container .select2-selection--single { height: 50px !important; padding: 10px; border: 1px solid #e0e0e0; border-radius: 10px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 48px !important; }
         .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px; color: #212529; }
 
-        /* CSS CETAK */
+        /* CSS CETAK (A4 Layout Presisi) */
         #print-area { display: none; } 
         @media print {
             @page { size: A4; margin: 1cm; }
             body { background: white; padding: 0; font-family: 'Times New Roman', Times, serif; }
-            #app-container, #login-overlay { display: none !important; }
+            #app-container, #login-overlay, .app-footer { display: none !important; }
             #print-area, #print-area * { visibility: visible; } 
             #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; font-size: 12pt; color: black; line-height: 1.5; }
             .header { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 40px; font-size: 14pt; }
@@ -143,26 +151,25 @@
 
     <div id="login-overlay">
         <div class="login-card">
-            <div class="logo-area" style="margin-bottom: 20px; box-shadow: none;">
+            <div class="logo-area" style="margin-bottom: 20px; box-shadow: none; width: 60px; height: 60px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg/480px-Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.png" alt="Logo">
             </div>
-            <h3>LOGIN APPS</h3>
+            <h3>LOGIN AREA</h3>
             <p style="color:#666; font-size:0.9rem;">Masukkan PIN Keamanan</p>
             <form onsubmit="doLogin(event)">
                 <input type="password" id="pin-input" placeholder="******" required autofocus>
-                <button type="submit" class="login-btn" id="btnLogin">MASUK</button>
+                <button type="submit" class="login-btn" id="btnLogin">MASUK APLIKASI</button>
             </form>
-            <div class="error-msg" id="login-error">PIN Salah!</div>
         </div>
     </div>
 
-    <div id="app-container" class="container">
+    <div id="app-container" class="container animate-in">
         <div class="app-header">
             <div class="header-actions">
-                <button class="btn-small" onclick="forceSync()" id="btnSync">
+                <button class="btn-small" onclick="forceSync()" id="btnSync" title="Update Data">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Sync
                 </button>
-                <button class="btn-small" onclick="doLogout()" style="background: rgba(220, 53, 69, 0.3); border-color: rgba(220, 53, 69, 0.5);">
+                <button class="btn-small" onclick="doLogout()" style="background: rgba(220, 53, 69, 0.25); border-color: rgba(220, 53, 69, 0.4);">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Logout
                 </button>
             </div>
@@ -176,46 +183,41 @@
 
         <div class="form-body">
             <form id="kuitansiForm" onsubmit="handleForm(event)">
-                
-                <span class="section-title">Informasi Dokumen</span>
+                <span class="section-title">Dokumen Transaksi</span>
                 <div class="form-group">
-                    <label>No. Bukti / Edit Data</label>
+                    <label>No. Bukti / Edit Data Lama</label>
                     <div class="input-group">
-                        <input type="text" name="no_bukti" id="no_bukti" placeholder="Loading..." required style="font-weight: 700; color: #2c3e50;">
+                        <input type="text" name="no_bukti" id="no_bukti" placeholder="Loading..." required style="font-weight: 700; color: var(--primary-color); font-size: 1.1rem;">
                         <button type="button" class="btn-search" onclick="cariData()">🔍 Cari / Edit</button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Kegiatan</label>
-                    <select id="kode_kegiatan" name="kode_kegiatan" class="select2-enable" required><option value="">Memuat...</option></select>
-                </div>
-
-                <div class="form-group">
-                    <label>Kode Barang</label>
-                    <select id="kode_barang" name="kode_barang" class="select2-enable" required><option value="">Memuat...</option></select>
-                </div>
+                <div class="form-group"><label>Kegiatan</label><select id="kode_kegiatan" name="kode_kegiatan" class="select2-enable" required><option value="">Memuat...</option></select></div>
+                <div class="form-group"><label>Kode Barang</label><select id="kode_barang" name="kode_barang" class="select2-enable" required><option value="">Memuat...</option></select></div>
                 
                 <hr>
-                <span class="section-title">Rincian Pembayaran</span>
+                <span class="section-title">Rincian & Pembayaran</span>
                 <div class="form-group"><label>Terima Dari</label><input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan"></div>
-                <div class="form-group"><label>Nominal (Rp)</label><input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required style="font-weight: 600;"></div>
-                <div class="form-group"><label>Terbilang</label><input type="text" name="terbilang" id="terbilang" readonly></div>
-                <div class="form-group"><label>Untuk Pembayaran</label><textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required></textarea></div>
+                <div class="form-group"><label>Nominal (Rp)</label><input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required style="font-weight: 700; font-size: 1.1rem;"></div>
+                <div class="form-group"><label>Terbilang</label><input type="text" name="terbilang" id="terbilang" readonly style="font-style: italic;"></div>
+                <div class="form-group"><label>Untuk Pembayaran</label><textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required placeholder="Deskripsi pembayaran..."></textarea></div>
                 <div class="form-group"><label>Tanggal Lunas</label><input type="date" name="tanggal_lunas" id="tanggal_lunas" required></div>
                 
                 <hr>
-                <span class="section-title">Pejabat Penandatangan</span>
+                <span class="section-title">Otorisasi Pejabat</span>
                 <div style="display: flex; gap: 20px;">
                     <div class="form-group" style="flex:1;"><label>Kepala Sekolah</label><input type="text" id="input_nama_kepala" readonly><input type="hidden" id="input_nip_kepala"></div>
                     <div class="form-group" style="flex:1;"><label>Bendahara BOS</label><input type="text" id="input_nama_bendahara" readonly><input type="hidden" id="input_nip_bendahara"></div>
                 </div>
-                <div class="form-group"><label>Yang Menerima</label><select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih / Ketik Baru --</option></select></div>
+                <div class="form-group"><label>Pihak Penerima</label><select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih / Ketik Baru --</option></select></div>
 
-                <div class="btn-group"><button type="submit" class="btn-save">Simpan & Cetak Kuitansi</button></div>
-                <p class="loading" id="loadingText">Sedang memproses data...</p>
+                <div class="btn-group"><button type="submit" class="btn-save">💾 Simpan & Cetak Kuitansi</button></div>
             </form>
         </div>
+    </div>
+    
+    <div class="app-footer">
+        &copy; 2025 SMPN 2 Kejayan. Aplikasi Pengelolaan Kuitansi BPU.
     </div>
 
     <div id="print-area">
@@ -237,18 +239,15 @@
     </div>
 
     <script>
-        // === URL API ANDA ===
+        // === URL BACKEND ANDA ===
         const API_URL = "https://script.google.com/macros/s/AKfycbxpG5QV91fNjCNytxF5rJaLS9SZXCvw84syncm43jPb4v9etl5YXjS__XUv13vreix9vA/exec"; 
-        
         const CACHE_KEY = "kuitansi_master_data_v1";
-        let AUTH_TOKEN = ""; // Kunci Password Sementara
+        let AUTH_TOKEN = ""; 
 
         let defaultTerimaDari = "Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan";
 
         window.onload = function() {
             document.getElementById('tanggal_lunas').valueAsDate = new Date();
-            
-            // CEK SESI LOGIN
             let sessionPass = sessionStorage.getItem("app_password");
             if (sessionPass) {
                 AUTH_TOKEN = sessionPass;
@@ -258,20 +257,20 @@
             }
         };
 
-        // 1. LOGIN LOGIC
+        // 1. LOGIN
         function doLogin(e) {
             e.preventDefault();
             let pin = document.getElementById('pin-input').value;
             let btn = document.getElementById('btnLogin');
-            btn.innerText = "Memeriksa..."; btn.disabled = true;
+            let originalText = btn.innerText;
+            btn.innerText = "Memverifikasi..."; btn.disabled = true;
 
-            // Cek Login
             fetch(API_URL + "?password=" + encodeURIComponent(pin))
             .then(res => res.json())
             .then(data => {
                 if (data.result === "error") {
-                    document.getElementById('login-error').style.display = "block";
-                    btn.innerText = "MASUK"; btn.disabled = false;
+                    Swal.fire({ icon: 'error', title: 'Gagal Masuk', text: 'PIN yang Anda masukkan salah!' });
+                    btn.innerText = originalText; btn.disabled = false;
                 } else {
                     // Login Sukses
                     AUTH_TOKEN = pin;
@@ -279,25 +278,34 @@
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('app-container').style.display = 'block';
                     
-                    // Load Data dari hasil login tadi
+                    // Animasi Selamat Datang
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+                    Toast.fire({ icon: 'success', title: 'Login Berhasil' });
+
                     isiDataAwal(data);
                     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                     document.getElementById('statusData').innerText = "SMPN 2 Kejayan - Tersinkronisasi.";
                 }
             })
             .catch(err => {
-                document.getElementById('login-error').innerText = "Gagal terhubung server.";
-                document.getElementById('login-error').style.display = "block";
-                btn.innerText = "MASUK"; btn.disabled = false;
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal terhubung ke server. Cek internet.' });
+                btn.innerText = originalText; btn.disabled = false;
             });
         }
 
         function doLogout() {
-            sessionStorage.removeItem("app_password");
-            location.reload();
+            Swal.fire({
+                title: 'Keluar Aplikasi?', text: "Sesi Anda akan berakhir.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#3085d6', cancelButtonColor: '#d33', confirmButtonText: 'Ya, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.removeItem("app_password");
+                    location.reload();
+                }
+            })
         }
 
-        // 2. LOAD DATA & SYNC (FIX STUCK LOADING)
+        // 2. LOAD DATA
         function loadInitialData() {
             let cachedData = localStorage.getItem(CACHE_KEY);
             let isCached = false;
@@ -314,11 +322,10 @@
             let btnSync = document.getElementById('btnSync');
             btnSync.classList.add('spinning');
             
-            // !!! INI PERBAIKANNYA: KIRIM PASSWORD SAAT SYNC !!!
             fetch(API_URL + "?password=" + encodeURIComponent(AUTH_TOKEN))
             .then(res => res.json())
             .then(data => {
-                if(data.result === "error") return; // Jika auth gagal, abaikan
+                if(data.result === "error") return; 
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 isiDataAwal(data);
                 document.getElementById('statusData').innerText = "SMPN 2 Kejayan - Tersinkronisasi.";
@@ -341,10 +348,7 @@
                  document.getElementById('no_bukti').value = data.nextNo;
             }
             
-            let curKeg = $('#kode_kegiatan').val();
-            let curBar = $('#kode_barang').val();
-            let curPen = $('#nama_penerima').val();
-
+            let curKeg = $('#kode_kegiatan').val(); let curBar = $('#kode_barang').val(); let curPen = $('#nama_penerima').val();
             let selKeg = $('#kode_kegiatan').empty().append('<option value=""></option>');
             let selBar = $('#kode_barang').empty().append('<option value=""></option>');
             let selPen = $('#nama_penerima').empty().append('<option value=""></option>');
@@ -353,7 +357,6 @@
             data.kegiatan.forEach(x => { selKeg.append(new Option(x, x)); });
             data.barang.forEach(x => { selBar.append(new Option(x, x)); });
             
-            // SETUP SELECT2 LEBAR PENUH
             $('.select2-enable').select2({ placeholder: "Cari Data...", allowClear: true, width: '100%' });
             $('.select2-penerima').select2({ placeholder: "Pilih / Ketik Nama Baru", allowClear: true, tags: true, width: '100%' });
 
@@ -371,16 +374,16 @@
 
         function cariData() {
             let no = document.getElementById('no_bukti').value;
-            if(!no) { alert("Masukkan No Bukti dulu!"); return; }
+            if(!no) { Swal.fire('Perhatian', 'Masukkan No Bukti dulu!', 'warning'); return; }
+            
             let btn = document.querySelector('.btn-search');
-            let oriText = btn.innerText; btn.innerText = "⌛"; btn.disabled = true;
+            let oriText = btn.innerText; btn.innerText = "⏳"; btn.disabled = true;
 
-            // KIRIM PASSWORD SAAT CARI
             fetch(API_URL + "?action=search&no=" + encodeURIComponent(no) + "&password=" + encodeURIComponent(AUTH_TOKEN))
             .then(res => res.json())
             .then(resp => {
                 btn.innerText = oriText; btn.disabled = false;
-                if (resp.result === "error") { alert(resp.error); return; }
+                if (resp.result === "error") { Swal.fire('Error', resp.error, 'error'); return; }
 
                 if(resp.status === "found") {
                     let d = resp.data;
@@ -396,48 +399,61 @@
                     } else { 
                         $('#nama_penerima').append(new Option(d.nama_penerima, d.nama_penerima, true, true)).trigger('change');
                     }
-                    alert("Data ditemukan! Silakan edit.");
-                } else { alert("Data tidak ditemukan!"); }
-            }).catch(err => { alert("Gagal mencari data."); btn.innerText = oriText; btn.disabled = false; });
+                    Swal.fire({ icon: 'success', title: 'Data Ditemukan', text: 'Silakan edit data, lalu klik Simpan.', timer: 2000, showConfirmButton: false });
+                } else { Swal.fire('Tidak Ditemukan', 'Nomor bukti tidak ada di database.', 'info'); }
+            }).catch(err => { Swal.fire('Gagal', 'Gagal mencari data.', 'error'); btn.innerText = oriText; btn.disabled = false; });
         }
 
         function handleForm(e) {
             e.preventDefault();
             let btn = document.querySelector('.btn-save');
-            let loading = document.getElementById('loadingText');
+            
+            // VALIDASI MANUAL AGAR LEBIH RAPI
             let valKeg = $('#kode_kegiatan').val(); let valBar = $('#kode_barang').val(); let valPen = $('#nama_penerima').val(); 
-            if(!valKeg || !valBar || !valPen) { alert("Mohon lengkapi semua data!"); return; }
+            if(!valKeg || !valBar || !valPen) { Swal.fire('Data Belum Lengkap', 'Mohon lengkapi Kegiatan, Barang, dan Penerima.', 'warning'); return; }
 
-            document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
-            document.getElementById('p_kegiatan_kode').innerText = valKeg;
-            document.getElementById('p_barang').innerText = valBar;
-            document.getElementById('p_terima').innerText = document.getElementById('terima_dari').value;
-            document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
-            document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
-            document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
-            let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
-            document.getElementById('p_tgl_1').innerText = tglCantik; document.getElementById('p_tgl_2').innerText = tglCantik; document.getElementById('p_penerima').innerText = valPen; 
-            document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
-            document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
-            document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
-            document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
+            // KONFIRMASI DULU
+            Swal.fire({
+                title: 'Simpan & Cetak?', text: "Pastikan data sudah benar.", icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#198754', cancelButtonColor: '#d33', confirmButtonText: 'Ya, Proses!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // PROSES SIMPAN
+                    let originalText = btn.innerText;
+                    btn.innerHTML = "⏳ Menyimpan..."; btn.disabled = true;
 
-            btn.disabled = true; loading.style.display = 'block';
-            let formData = new FormData(document.getElementById('kuitansiForm'));
-            formData.set('kode_kegiatan', valKeg); formData.set('kode_barang', valBar); formData.set('nama_penerima', valPen); formData.set('tanggal_lunas', tglCantik);
+                    document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
+                    document.getElementById('p_kegiatan_kode').innerText = valKeg;
+                    document.getElementById('p_barang').innerText = valBar;
+                    document.getElementById('p_terima').innerText = document.getElementById('terima_dari').value;
+                    document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
+                    document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
+                    document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
+                    let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
+                    document.getElementById('p_tgl_1').innerText = tglCantik; document.getElementById('p_tgl_2').innerText = tglCantik; document.getElementById('p_penerima').innerText = valPen; 
+                    document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
+                    document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
+                    document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
+                    document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
 
-            // KIRIM PASSWORD SAAT POST
-            fetch(API_URL + "?password=" + encodeURIComponent(AUTH_TOKEN), { method: 'POST', body: formData })
-            .then(res => res.json()).then(response => {
-                loading.style.display = 'none'; btn.disabled = false;
-                if (response.result === "error") { alert(response.error); return; }
+                    let formData = new FormData(document.getElementById('kuitansiForm'));
+                    formData.set('kode_kegiatan', valKeg); formData.set('kode_barang', valBar); formData.set('nama_penerima', valPen); formData.set('tanggal_lunas', tglCantik);
 
-                if(response.result === 'success') { 
-                    if(response.mode === "Update") alert("Data Berhasil Diupdate!");
-                    window.print();
-                    resetFormInput(response.nextNo); forceSync(); 
-                } else { alert("Gagal menyimpan: " + response.error); }
-            }).catch(err => { alert("Terjadi kesalahan jaringan."); loading.style.display = 'none'; btn.disabled = false; });
+                    fetch(API_URL + "?password=" + encodeURIComponent(AUTH_TOKEN), { method: 'POST', body: formData })
+                    .then(res => res.json()).then(response => {
+                        btn.innerHTML = originalText; btn.disabled = false;
+                        if (response.result === "error") { Swal.fire('Gagal', response.error, 'error'); return; }
+
+                        if(response.result === 'success') { 
+                            let msg = response.mode === "Update" ? "Data Berhasil Diperbarui!" : "Data Baru Tersimpan!";
+                            Swal.fire({ icon: 'success', title: 'Berhasil', text: msg, timer: 1500, showConfirmButton: false }).then(() => {
+                                window.print();
+                                resetFormInput(response.nextNo); forceSync(); 
+                            });
+                        } 
+                    }).catch(err => { Swal.fire('Error', 'Terjadi kesalahan jaringan.', 'error'); btn.innerHTML = originalText; btn.disabled = false; });
+                }
+            });
         }
 
         function resetFormInput(nextNo) {

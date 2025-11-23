@@ -6,203 +6,107 @@
     <title>Aplikasi Cetak Kuitansi BPU - SMPN 2 Kejayan</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
-        /* --- CSS TAMPILAN LAYAR (MODERN UI) --- */
+        /* --- CSS TAMPILAN LAYAR --- */
         :root {
-            --primary-color: #0d6efd; /* Biru Modern */
-            --primary-hover: #0b5ed7;
-            --bg-color: #f4f6f8;      /* Abu-abu sangat muda */
-            --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
+            --primary-color: #0d6efd; --primary-hover: #0b5ed7;
+            --bg-color: #f4f6f8; --card-bg: #ffffff;
+            --text-main: #212529; --border-color: #dee2e6;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         body {
-            font-family: 'Inter', sans-serif; /* Font Modern */
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 40px 20px;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color);
+            color: var(--text-main); margin: 0; padding: 20px; line-height: 1.6;
         }
 
-        /* CARD CONTAINER */
         .container {
-            max-width: 850px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 16px; /* Sudut membulat */
-            box-shadow: var(--shadow);
-            overflow: hidden; /* Agar header tidak keluar border */
+            max-width: 850px; margin: 0 auto; background: var(--card-bg);
+            border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
         }
 
         /* HEADER */
         .app-header {
             background: linear-gradient(135deg, var(--primary-color), #0043a8);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
+            color: white; padding: 30px 20px; text-align: center; position: relative;
         }
         
         .logo-area {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 70px; height: 70px; background: white; border-radius: 50%;
+            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;
         }
         
-        .logo-area img { width: 40px; height: auto; }
+        /* Perbaikan Gambar Logo agar pas di tengah */
+        .logo-area img { width: 80%; height: auto; object-fit: contain; }
 
         .app-header h2 { margin: 0; font-weight: 700; font-size: 1.5rem; }
         .app-header p { margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem; font-weight: 300; }
 
-        /* FORM BODY */
-        .form-body { padding: 40px; }
-
+        .form-body { padding: 30px 40px; }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; margin-bottom: 8px; color: #344767; font-size: 0.95rem; }
         
-        /* STYLING INPUT MODERN */
         input, textarea, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color);
+            border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem;
             background-color: #fff;
         }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary-color); outline: none; }
+        input[readonly] { background-color: #f8f9fa; cursor: not-allowed; }
 
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15); /* Efek Glow */
-            outline: none;
-        }
-
-        /* Readonly fields */
-        input[readonly] {
-            background-color: #f8f9fa;
-            border-color: #e9ecef;
-            color: var(--text-muted);
-            cursor: not-allowed;
-        }
-
-        /* Input Group (Cari Data) */
         .input-group { display: flex; gap: 10px; }
         .btn-search {
-            background: #e7f1ff;
-            color: var(--primary-color);
-            border: 1px solid rgba(13, 110, 253, 0.2);
-            border-radius: 8px;
-            padding: 0 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
+            background: #e7f1ff; color: var(--primary-color); border: 1px solid rgba(13, 110, 253, 0.2);
+            border-radius: 8px; padding: 0 20px; cursor: pointer; font-weight: 600; white-space: nowrap;
         }
         .btn-search:hover { background: var(--primary-color); color: white; }
 
-        /* SECTION DIVIDER */
         hr { border: 0; border-top: 1px dashed #ccc; margin: 30px 0; }
-        
-        .section-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 15px;
-            display: block;
-        }
+        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; font-weight: 700; margin-bottom: 15px; display: block; }
 
-        /* TOMBOL UTAMA */
-        .btn-group { margin-top: 10px; }
         .btn-save {
-            width: 100%;
-            background: #198754; /* Hijau Sukses */
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
-            transition: transform 0.1s, box-shadow 0.2s;
+            width: 100%; background: #198754; color: white; border: none; padding: 15px;
+            border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 10px;
         }
-        .btn-save:hover { background: #157347; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(25, 135, 84, 0.4); }
-        .btn-save:active { transform: translateY(0); }
+        .btn-save:hover { background: #157347; }
 
-        /* HEADER ACTIONS (Sync) */
         .header-actions { position: absolute; top: 20px; right: 20px; }
         .btn-sync {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 30px;
-            padding: 6px 16px;
-            cursor: pointer;
-            font-size: 0.85em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.2s;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: white;
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 30px; padding: 6px 16px;
+            cursor: pointer; font-size: 0.85em; display: flex; align-items: center; gap: 6px;
         }
         .btn-sync:hover { background: rgba(255,255,255,0.3); }
         .btn-sync.spinning svg { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loading { display: none; text-align: center; color: var(--primary-color); margin-top: 15px; }
 
-        .loading { display: none; text-align: center; color: var(--primary-color); font-weight: 600; margin-top: 15px; }
-
-        /* CUSTOM SELECT2 (Agar cocok dengan tema modern) */
+        /* PERBAIKAN CSS SELECT2 (Wajib width 100%) */
+        .select2-container { width: 100% !important; display: block; }
         .select2-container .select2-selection--single { height: 46px !important; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; }
         .select2-container--default .select2-selection--single .select2-selection__arrow { height: 44px !important; }
-        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px; color: var(--text-main); }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px; color: #212529; }
 
-        /* --- CSS CETAK (Layout A4 Presisi - TIDAK BERUBAH) --- */
+        /* CSS CETAK (TIDAK BERUBAH) */
         #print-area { display: none; } 
-
         @media print {
             @page { size: A4; margin: 1cm; }
             body { background: white; padding: 0; font-family: 'Times New Roman', Times, serif; }
-            .container, .btn-group { display: none; }
-            
+            .container { display: none; }
             #print-area, #print-area * { visibility: visible; } 
-            #print-area {
-                display: block; position: absolute; left: 0; top: 0; width: 100%;
-                font-size: 12pt; color: black; line-height: 1.5; 
-            }
+            #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; font-size: 12pt; color: black; line-height: 1.5; }
             .header { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 40px; font-size: 14pt; }
             .row { display: flex; margin-bottom: 18px; }
-            .label { width: 160px; flex-shrink: 0; } 
-            .separator { width: 20px; flex-shrink: 0; text-align: center; }
-            .value { flex: 1; text-align: justify; } 
-            
-            /* TANDA TANGAN (1 BARIS) */
-            .ttd-container { 
-                margin-top: 80px; display: flex; justify-content: space-between; text-align: center; width: 100%; font-size: 10pt; 
-            }
+            .label { width: 160px; flex-shrink: 0; } .separator { width: 20px; flex-shrink: 0; text-align: center; } .value { flex: 1; text-align: justify; } 
+            .ttd-container { margin-top: 80px; display: flex; justify-content: space-between; text-align: center; width: 100%; font-size: 10pt; }
             .nowrap-text { white-space: nowrap; }
-            .ttd-box-left { width: 22%; padding-right: 2px; } 
-            .ttd-box-center { width: 44%; padding: 0 2px; } 
-            .ttd-box-right { width: 34%; padding-left: 2px; }
-            .ttd-space { height: 75px; }
-            .bold { font-weight: bold; }
+            .ttd-box-left { width: 22%; padding-right: 2px; } .ttd-box-center { width: 44%; padding: 0 2px; } .ttd-box-right { width: 34%; padding-left: 2px; }
+            .ttd-space { height: 75px; } .bold { font-weight: bold; }
         }
     </style>
 </head>
@@ -211,14 +115,13 @@
     <div class="container">
         <div class="app-header">
             <div class="header-actions">
-                <button type="button" class="btn-sync" onclick="forceSync()" id="btnSync" title="Update Data dari Google Sheet">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                    Sync Data
+                <button type="button" class="btn-sync" onclick="forceSync()" id="btnSync" title="Update Data">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Sync
                 </button>
             </div>
             
             <div class="logo-area">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Lambang_Kemdikbud.png" alt="Logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg/480px-Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.png" alt="Logo">
             </div>
             <h2>Aplikasi Kuitansi BPU</h2>
             <p id="statusData">SMPN 2 Kejayan - Memuat data...</p>
@@ -226,12 +129,11 @@
 
         <div class="form-body">
             <form id="kuitansiForm" onsubmit="handleForm(event)">
-                
                 <span class="section-title">Informasi Dokumen</span>
                 <div class="form-group">
                     <label>No. Bukti / Edit Data</label>
                     <div class="input-group">
-                        <input type="text" name="no_bukti" id="no_bukti" placeholder="Sedang mengambil nomor..." required style="font-weight: 700; color: #2c3e50;">
+                        <input type="text" name="no_bukti" id="no_bukti" placeholder="Loading..." required style="font-weight: 700;">
                         <button type="button" class="btn-search" onclick="cariData()">🔍 Cari / Edit</button>
                     </div>
                 </div>
@@ -248,63 +150,22 @@
                 
                 <hr>
                 <span class="section-title">Rincian Pembayaran</span>
-
-                <div class="form-group">
-                    <label>Terima Dari</label>
-                    <input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan">
-                </div>
-                
-                <div class="form-group">
-                    <label>Nominal (Rp)</label>
-                    <input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required style="font-size: 1.1rem; font-weight: 600;">
-                </div>
-                
-                <div class="form-group">
-                    <label>Terbilang</label>
-                    <input type="text" name="terbilang" id="terbilang" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <label>Untuk Pembayaran</label>
-                    <textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required placeholder="Tulis uraian pembayaran..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Tanggal Lunas</label>
-                    <input type="date" name="tanggal_lunas" id="tanggal_lunas" required>
-                </div>
+                <div class="form-group"><label>Terima Dari</label><input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan"></div>
+                <div class="form-group"><label>Nominal (Rp)</label><input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required style="font-weight: 600;"></div>
+                <div class="form-group"><label>Terbilang</label><input type="text" name="terbilang" id="terbilang" readonly></div>
+                <div class="form-group"><label>Untuk Pembayaran</label><textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required></textarea></div>
+                <div class="form-group"><label>Tanggal Lunas</label><input type="date" name="tanggal_lunas" id="tanggal_lunas" required></div>
                 
                 <hr>
                 <span class="section-title">Pejabat Penandatangan</span>
+                <div style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1;"><label>Kepala Sekolah</label><input type="text" id="input_nama_kepala" readonly><input type="hidden" id="input_nip_kepala"></div>
+                    <div class="form-group" style="flex:1;"><label>Bendahara BOS</label><input type="text" id="input_nama_bendahara" readonly><input type="hidden" id="input_nip_bendahara"></div>
+                </div>
+                <div class="form-group"><label>Yang Menerima</label><select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih / Ketik Baru --</option></select></div>
 
-                <div class="row-inputs" style="display: flex; gap: 20px;">
-                    <div class="form-group" style="flex:1;">
-                        <label>Kepala Sekolah</label>
-                        <input type="text" id="input_nama_kepala" readonly>
-                        <input type="hidden" id="input_nip_kepala">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label>Bendahara BOS</label>
-                        <input type="text" id="input_nama_bendahara" readonly>
-                        <input type="hidden" id="input_nip_bendahara">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Yang Menerima (Pihak Ketiga)</label>
-                    <select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih atau Ketik Baru --</option></select>
-                </div>
-
-                <div class="btn-group">
-                    <button type="submit" class="btn-save">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px; vertical-align: -2px;">
-                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
-                        </svg>
-                        Simpan & Cetak Kuitansi
-                    </button>
-                </div>
-                <p class="loading" id="loadingText">Sedang memproses data ke server...</p>
+                <div class="btn-group"><button type="submit" class="btn-save">Simpan & Cetak Kuitansi</button></div>
+                <p class="loading" id="loadingText">Sedang memproses data...</p>
             </form>
         </div>
     </div>
@@ -328,10 +189,8 @@
     </div>
 
     <script>
-        // === MASUKKAN URL BACKEND GAS ANDA DI SINI ===
+        // === URL BACKEND ANDA ===
         const API_URL = "https://script.google.com/macros/s/AKfycbxpG5QV91fNjCNytxF5rJaLS9SZXCvw84syncm43jPb4v9etl5YXjS__XUv13vreix9vA/exec"; 
-        // =============================================
-        
         const CACHE_KEY = "kuitansi_master_data_v1";
         let defaultTerimaDari = "Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan";
 
@@ -340,7 +199,6 @@
             loadInitialData();
         };
 
-        // --- LOGIC CACHING & SYNC ---
         function loadInitialData() {
             let cachedData = localStorage.getItem(CACHE_KEY);
             let isCached = false;
@@ -375,9 +233,10 @@
         function isiDataAwal(data) {
             if (data.nextNo && document.getElementById('no_bukti').value === "") {
                 document.getElementById('no_bukti').value = data.nextNo;
+            } else if (data.nextNo && document.getElementById('no_bukti').placeholder.includes("nomor")) {
+                 document.getElementById('no_bukti').value = data.nextNo;
             }
             
-            // Save current selections
             let curKeg = $('#kode_kegiatan').val();
             let curBar = $('#kode_barang').val();
             let curPen = $('#nama_penerima').val();
@@ -390,10 +249,11 @@
             data.kegiatan.forEach(x => { selKeg.append(new Option(x, x)); });
             data.barang.forEach(x => { selBar.append(new Option(x, x)); });
             
-            $('.select2-enable').select2({ placeholder: "Cari Data...", allowClear: true });
-            $('.select2-penerima').select2({ placeholder: "Pilih / Ketik Nama Baru", allowClear: true, tags: true });
+            // --- PERBAIKAN BUG TAMPILAN DROPDOWN ---
+            // Kita tambahkan { width: '100%' } agar dropdown tidak gepeng/penyet
+            $('.select2-enable').select2({ placeholder: "Cari Data...", allowClear: true, width: '100%' });
+            $('.select2-penerima').select2({ placeholder: "Pilih / Ketik Nama Baru", allowClear: true, tags: true, width: '100%' });
 
-            // Restore
             if(curKeg) $('#kode_kegiatan').val(curKeg).trigger('change');
             if(curBar) $('#kode_barang').val(curBar).trigger('change');
             if(curPen) $('#nama_penerima').val(curPen).trigger('change');
@@ -406,18 +266,13 @@
             }
         }
 
-        // --- FUNGSI OPERASIONAL ---
         function cariData() {
             let no = document.getElementById('no_bukti').value;
             if(!no) { alert("Masukkan No Bukti dulu!"); return; }
-            
             let btn = document.querySelector('.btn-search');
-            let oriText = btn.innerText;
-            btn.innerText = "⌛"; btn.disabled = true;
+            let oriText = btn.innerText; btn.innerText = "⌛"; btn.disabled = true;
 
-            fetch(API_URL + "?action=search&no=" + encodeURIComponent(no))
-            .then(res => res.json())
-            .then(resp => {
+            fetch(API_URL + "?action=search&no=" + encodeURIComponent(no)).then(res => res.json()).then(resp => {
                 btn.innerText = oriText; btn.disabled = false;
                 if(resp.status === "found") {
                     let d = resp.data;
@@ -428,31 +283,23 @@
                     document.getElementById('terbilang').value = d.terbilang;
                     document.getElementById('untuk_pembayaran').value = d.untuk_pembayaran;
                     document.getElementById('tanggal_lunas').value = d.tanggal_lunas;
-                    
                     if ($('#nama_penerima').find("option[value='" + d.nama_penerima + "']").length) {
                         $('#nama_penerima').val(d.nama_penerima).trigger('change');
                     } else { 
-                        var newOption = new Option(d.nama_penerima, d.nama_penerima, true, true);
-                        $('#nama_penerima').append(newOption).trigger('change');
+                        $('#nama_penerima').append(new Option(d.nama_penerima, d.nama_penerima, true, true)).trigger('change');
                     }
                     alert("Data ditemukan! Silakan edit.");
                 } else { alert("Data tidak ditemukan!"); }
-            })
-            .catch(err => { console.error(err); alert("Gagal mencari data."); btn.innerText = oriText; btn.disabled = false; });
+            }).catch(err => { console.error(err); alert("Gagal mencari data."); btn.innerText = oriText; btn.disabled = false; });
         }
 
         function handleForm(e) {
             e.preventDefault();
             let btn = document.querySelector('.btn-save');
             let loading = document.getElementById('loadingText');
-            
-            let valKeg = $('#kode_kegiatan').val();
-            let valBar = $('#kode_barang').val();
-            let valPen = $('#nama_penerima').val(); 
-
+            let valKeg = $('#kode_kegiatan').val(); let valBar = $('#kode_barang').val(); let valPen = $('#nama_penerima').val(); 
             if(!valKeg || !valBar || !valPen) { alert("Mohon lengkapi semua data!"); return; }
 
-            // Preview
             document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
             document.getElementById('p_kegiatan_kode').innerText = valKeg;
             document.getElementById('p_barang').innerText = valBar;
@@ -460,77 +307,37 @@
             document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
             document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
             document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
-            
             let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
-            document.getElementById('p_tgl_1').innerText = tglCantik;
-            document.getElementById('p_tgl_2').innerText = tglCantik; 
-            document.getElementById('p_penerima').innerText = valPen; 
-
+            document.getElementById('p_tgl_1').innerText = tglCantik; document.getElementById('p_tgl_2').innerText = tglCantik; document.getElementById('p_penerima').innerText = valPen; 
             document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
             document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
             document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
             document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
 
-            // Kirim
             btn.disabled = true; loading.style.display = 'block';
             let formData = new FormData(document.getElementById('kuitansiForm'));
-            formData.set('kode_kegiatan', valKeg);
-            formData.set('kode_barang', valBar);
-            formData.set('nama_penerima', valPen);
-            formData.set('tanggal_lunas', tglCantik);
+            formData.set('kode_kegiatan', valKeg); formData.set('kode_barang', valBar); formData.set('nama_penerima', valPen); formData.set('tanggal_lunas', tglCantik);
 
-            fetch(API_URL, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(response => {
+            fetch(API_URL, { method: 'POST', body: formData }).then(res => res.json()).then(response => {
                 loading.style.display = 'none'; btn.disabled = false;
                 if(response.result === 'success') { 
                     if(response.mode === "Update") alert("Data Berhasil Diupdate!");
                     window.print();
-                    resetFormInput(response.nextNo); 
-                    forceSync(); 
-                } 
-                else { alert("Gagal menyimpan: " + response.error); }
-            })
-            .catch(err => { console.error(err); alert("Terjadi kesalahan jaringan."); loading.style.display = 'none'; btn.disabled = false; });
+                    resetFormInput(response.nextNo); forceSync(); 
+                } else { alert("Gagal menyimpan: " + response.error); }
+            }).catch(err => { console.error(err); alert("Terjadi kesalahan jaringan."); loading.style.display = 'none'; btn.disabled = false; });
         }
 
         function resetFormInput(nextNo) {
-            $('#kode_kegiatan').val(null).trigger('change');
-            $('#kode_barang').val(null).trigger('change');
-            $('#nama_penerima').val(null).trigger('change');
-            
-            document.getElementById('nominal').value = "";
-            document.getElementById('terbilang').value = "";
-            document.getElementById('untuk_pembayaran').value = "";
+            $('#kode_kegiatan').val(null).trigger('change'); $('#kode_barang').val(null).trigger('change'); $('#nama_penerima').val(null).trigger('change');
+            document.getElementById('nominal').value = ""; document.getElementById('terbilang').value = ""; document.getElementById('untuk_pembayaran').value = "";
             document.getElementById('no_bukti').value = nextNo;
             document.getElementById('terima_dari').value = defaultTerimaDari;
             document.getElementById('tanggal_lunas').valueAsDate = new Date();
         }
-
-        function formatTanggalIndo(isoDate) {
-            if(!isoDate) return "";
-            const dp = isoDate.split("-");
-            const bulanIndo = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            return `${dp[2]} ${bulanIndo[parseInt(dp[1])]} ${dp[0]}`;
-        }
-
-        function updateTerbilang() {
-            let val = document.getElementById('nominal').value;
-            document.getElementById('terbilang').value = terbilang(val) + " Rupiah";
-        }
-
-        function terbilang(a){
-            var bilangan = ['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
-            var kalimat=""; var angka=Math.abs(a);
-            if(angka<12){kalimat=" "+bilangan[angka];}
-            else if(angka<20){kalimat=terbilang(angka-10)+" Belas";}
-            else if(angka<100){kalimat=terbilang(Math.floor(angka/10))+" Puluh"+terbilang(angka%10);}
-            else if(angka<200){kalimat=" Seratus"+terbilang(angka-100);}
-            else if(angka<1000){kalimat=terbilang(Math.floor(angka/100))+" Ratus"+terbilang(angka%100);}
-            else if(angka<1000000){kalimat=terbilang(Math.floor(angka/1000))+" Ribu"+terbilang(angka%1000);}
-            else if(angka<1000000000){kalimat=terbilang(Math.floor(angka/1000000))+" Juta"+terbilang(angka%1000000);}
-            return kalimat;
-        }
+        function formatTanggalIndo(isoDate) { if(!isoDate) return ""; const dp = isoDate.split("-"); const bln = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; return `${dp[2]} ${bln[parseInt(dp[1])]} ${dp[0]}`; }
+        function updateTerbilang() { document.getElementById('terbilang').value = terbilang(document.getElementById('nominal').value) + " Rupiah"; }
+        function terbilang(a){ var bil=['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas']; var kal=""; var ang=Math.abs(a); if(ang<12){kal=" "+bil[ang];} else if(ang<20){kal=terbilang(ang-10)+" Belas";} else if(ang<100){kal=terbilang(Math.floor(ang/10))+" Puluh"+terbilang(ang%10);} else if(ang<200){kal=" Seratus"+terbilang(ang-100);} else if(ang<1000){kal=terbilang(Math.floor(ang/100))+" Ratus"+terbilang(ang%100);} else if(ang<1000000){kal=terbilang(Math.floor(ang/1000))+" Ribu"+terbilang(ang%1000);} else if(ang<1000000000){kal=terbilang(Math.floor(ang/1000000))+" Juta"+terbilang(ang%1000000);} return kal; }
     </script>
 </body>
 </html>

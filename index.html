@@ -3,92 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Cetak Kuitansi BPU</title>
+    <title>Aplikasi Cetak Kuitansi BPU - SMPN 2 Kejayan</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
-        /* --- CSS TAMPILAN LAYAR (FORM INPUT) --- */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #777; font-size: 0.9em; margin-bottom: 20px; }
-        
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
-        
-        /* Styling Input */
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-        input:focus, textarea:focus, select:focus { border-color: #007bff; outline: none; }
-        
-        /* Grouping Input dengan Tombol Cari */
-        .input-group { display: flex; gap: 5px; }
-        .btn-search { background: #17a2b8; color: white; border: none; border-radius: 4px; padding: 0 15px; cursor: pointer; font-weight: bold; }
-        .btn-search:hover { background: #138496; }
+        /* --- CSS TAMPILAN LAYAR (MODERN UI) --- */
+        :root {
+            --primary-color: #0d6efd; /* Biru Modern */
+            --primary-hover: #0b5ed7;
+            --bg-color: #f4f6f8;      /* Abu-abu sangat muda */
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
 
-        /* Tombol Sync */
-        .header-actions { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-        .btn-sync { background: #6c757d; color: white; border: none; border-radius: 20px; padding: 5px 15px; cursor: pointer; font-size: 0.85em; display: flex; align-items: center; gap: 5px; }
-        .btn-sync:hover { background: #5a6268; }
+        body {
+            font-family: 'Inter', sans-serif; /* Font Modern */
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        /* CARD CONTAINER */
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px; /* Sudut membulat */
+            box-shadow: var(--shadow);
+            overflow: hidden; /* Agar header tidak keluar border */
+        }
+
+        /* HEADER */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color), #0043a8);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo-area {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .logo-area img { width: 40px; height: auto; }
+
+        .app-header h2 { margin: 0; font-weight: 700; font-size: 1.5rem; }
+        .app-header p { margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem; font-weight: 300; }
+
+        /* FORM BODY */
+        .form-body { padding: 40px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #344767; font-size: 0.95rem; }
+        
+        /* STYLING INPUT MODERN */
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15); /* Efek Glow */
+            outline: none;
+        }
+
+        /* Readonly fields */
+        input[readonly] {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Input Group (Cari Data) */
+        .input-group { display: flex; gap: 10px; }
+        .btn-search {
+            background: #e7f1ff;
+            color: var(--primary-color);
+            border: 1px solid rgba(13, 110, 253, 0.2);
+            border-radius: 8px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-search:hover { background: var(--primary-color); color: white; }
+
+        /* SECTION DIVIDER */
+        hr { border: 0; border-top: 1px dashed #ccc; margin: 30px 0; }
+        
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* TOMBOL UTAMA */
+        .btn-group { margin-top: 10px; }
+        .btn-save {
+            width: 100%;
+            background: #198754; /* Hijau Sukses */
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .btn-save:hover { background: #157347; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(25, 135, 84, 0.4); }
+        .btn-save:active { transform: translateY(0); }
+
+        /* HEADER ACTIONS (Sync) */
+        .header-actions { position: absolute; top: 20px; right: 20px; }
+        .btn-sync {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 30px;
+            padding: 6px 16px;
+            cursor: pointer;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .btn-sync:hover { background: rgba(255,255,255,0.3); }
         .btn-sync.spinning svg { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Select2 Custom Style */
-        .select2-container .select2-selection--single { height: 42px !important; padding: 5px; border: 1px solid #ddd; }
-        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; }
-        .select2-container { width: 100% !important; }
-        
-        /* Tombol Simpan */
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .btn-save { background: #28a745; color: white; } .btn-save:hover { background: #218838; }
-        .loading { display: none; text-align: center; color: #007bff; font-weight: bold; margin-top: 10px; }
+        .loading { display: none; text-align: center; color: var(--primary-color); font-weight: 600; margin-top: 15px; }
 
-        /* --- CSS CETAK (LAYOUT KUITANSI) --- */
+        /* CUSTOM SELECT2 (Agar cocok dengan tema modern) */
+        .select2-container .select2-selection--single { height: 46px !important; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 44px !important; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 28px; color: var(--text-main); }
+
+        /* --- CSS CETAK (Layout A4 Presisi - TIDAK BERUBAH) --- */
         #print-area { display: none; } 
 
         @media print {
-            @page { size: A4; margin: 1cm; } /* Margin 1cm agar lega */
-            
-            body * { visibility: hidden; } 
+            @page { size: A4; margin: 1cm; }
+            body { background: white; padding: 0; font-family: 'Times New Roman', Times, serif; }
             .container, .btn-group { display: none; }
             
             #print-area, #print-area * { visibility: visible; } 
             #print-area {
                 display: block; position: absolute; left: 0; top: 0; width: 100%;
-                font-family: 'Times New Roman', Times, serif; 
-                font-size: 12pt; 
-                color: black;
-                line-height: 1.5; /* Jarak antar baris kalimat */
+                font-size: 12pt; color: black; line-height: 1.5; 
             }
-            
             .header { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 40px; font-size: 14pt; }
-            
-            /* Baris Data (Jarak 18px agar tidak mepet) */
             .row { display: flex; margin-bottom: 18px; }
             .label { width: 160px; flex-shrink: 0; } 
             .separator { width: 20px; flex-shrink: 0; text-align: center; }
             .value { flex: 1; text-align: justify; } 
             
-            /* --- AREA TANDA TANGAN --- */
+            /* TANDA TANGAN (1 BARIS) */
             .ttd-container { 
-                margin-top: 80px; /* Jarak jauh dari atas */
-                display: flex; 
-                justify-content: space-between; 
-                text-align: center; 
-                width: 100%;
-                font-size: 10pt; /* Font diperkecil agar muat 1 baris */
+                margin-top: 80px; display: flex; justify-content: space-between; text-align: center; width: 100%; font-size: 10pt; 
             }
-
             .nowrap-text { white-space: nowrap; }
-
-            /* Pembagian Ruang Asimetris (Agar Tengah Muat Banyak) */
-            .ttd-box-left { width: 22%; padding-right: 2px; }
-            .ttd-box-center { width: 44%; padding: 0 2px; }
+            .ttd-box-left { width: 22%; padding-right: 2px; } 
+            .ttd-box-center { width: 44%; padding: 0 2px; } 
             .ttd-box-right { width: 34%; padding-left: 2px; }
-            
             .ttd-space { height: 75px; }
             .bold { font-weight: bold; }
         }
@@ -96,80 +208,109 @@
 </head>
 <body>
 
-    <div class="container" id="form-input">
-        
-        <div class="header-actions">
-            <button type="button" class="btn-sync" onclick="forceSync()" id="btnSync">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                Sinkronisasi Data
-            </button>
+    <div class="container">
+        <div class="app-header">
+            <div class="header-actions">
+                <button type="button" class="btn-sync" onclick="forceSync()" id="btnSync" title="Update Data dari Google Sheet">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    Sync Data
+                </button>
+            </div>
+            
+            <div class="logo-area">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Lambang_Kemdikbud.png" alt="Logo">
+            </div>
+            <h2>Aplikasi Kuitansi BPU</h2>
+            <p id="statusData">SMPN 2 Kejayan - Memuat data...</p>
         </div>
 
-        <h2>Input Data Kuitansi BPU</h2>
-        <div class="subtitle" id="statusData">Memuat data...</div>
-
-        <form id="kuitansiForm" onsubmit="handleForm(event)">
-            
-            <div class="form-group">
-                <label>No. Bukti</label>
-                <div class="input-group">
-                    <input type="text" name="no_bukti" id="no_bukti" placeholder="Sedang mengambil nomor..." required style="font-weight: bold;">
-                    <button type="button" class="btn-search" onclick="cariData()">🔍 Cari Data</button>
+        <div class="form-body">
+            <form id="kuitansiForm" onsubmit="handleForm(event)">
+                
+                <span class="section-title">Informasi Dokumen</span>
+                <div class="form-group">
+                    <label>No. Bukti / Edit Data</label>
+                    <div class="input-group">
+                        <input type="text" name="no_bukti" id="no_bukti" placeholder="Sedang mengambil nomor..." required style="font-weight: 700; color: #2c3e50;">
+                        <button type="button" class="btn-search" onclick="cariData()">🔍 Cari / Edit</button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>Kegiatan</label>
-                <select id="kode_kegiatan" name="kode_kegiatan" class="select2-enable" required><option value="">Memuat...</option></select>
-            </div>
+                <div class="form-group">
+                    <label>Kegiatan</label>
+                    <select id="kode_kegiatan" name="kode_kegiatan" class="select2-enable" required><option value="">Memuat...</option></select>
+                </div>
 
-            <div class="form-group">
-                <label>Kode Barang</label>
-                <select id="kode_barang" name="kode_barang" class="select2-enable" required><option value="">Memuat...</option></select>
-            </div>
-            
-            <div class="form-group">
-                <label>Terima Dari</label>
-                <input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan">
-            </div>
-            
-            <div class="form-group">
-                <label>Nominal (Rp)</label>
-                <input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Terbilang</label>
-                <input type="text" name="terbilang" id="terbilang" readonly style="background: #eee;">
-            </div>
-            
-            <div class="form-group">
-                <label>Untuk Pembayaran</label>
-                <textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required></textarea>
-            </div>
+                <div class="form-group">
+                    <label>Kode Barang</label>
+                    <select id="kode_barang" name="kode_barang" class="select2-enable" required><option value="">Memuat...</option></select>
+                </div>
+                
+                <hr>
+                <span class="section-title">Rincian Pembayaran</span>
 
-            <div class="form-group">
-                <label>Tanggal Lunas</label>
-                <input type="date" name="tanggal_lunas" id="tanggal_lunas" required>
-            </div>
-            
-            <hr>
-            <div class="form-group"><label>Menyetujui (Kepala Sekolah)</label><input type="text" id="input_nama_kepala" readonly style="background: #f9f9f9; font-weight: bold;"><input type="hidden" id="input_nip_kepala"></div>
-            <div class="form-group"><label>Bendahara BOS</label><input type="text" id="input_nama_bendahara" readonly style="background: #f9f9f9; font-weight: bold;"><input type="hidden" id="input_nip_bendahara"></div>
-            
-            <div class="form-group"><label>Yang Menerima (Pihak Ketiga)</label><select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih atau Ketik Baru --</option></select></div>
-            <hr>
+                <div class="form-group">
+                    <label>Terima Dari</label>
+                    <input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan">
+                </div>
+                
+                <div class="form-group">
+                    <label>Nominal (Rp)</label>
+                    <input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required style="font-size: 1.1rem; font-weight: 600;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Terbilang</label>
+                    <input type="text" name="terbilang" id="terbilang" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Untuk Pembayaran</label>
+                    <textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required placeholder="Tulis uraian pembayaran..."></textarea>
+                </div>
 
-            <div class="btn-group">
-                <button type="submit" class="btn-save">Simpan / Update & Cetak</button>
-            </div>
-            <p class="loading" id="loadingText">Memproses Data...</p>
-        </form>
+                <div class="form-group">
+                    <label>Tanggal Lunas</label>
+                    <input type="date" name="tanggal_lunas" id="tanggal_lunas" required>
+                </div>
+                
+                <hr>
+                <span class="section-title">Pejabat Penandatangan</span>
+
+                <div class="row-inputs" style="display: flex; gap: 20px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Kepala Sekolah</label>
+                        <input type="text" id="input_nama_kepala" readonly>
+                        <input type="hidden" id="input_nip_kepala">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Bendahara BOS</label>
+                        <input type="text" id="input_nama_bendahara" readonly>
+                        <input type="hidden" id="input_nip_bendahara">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Yang Menerima (Pihak Ketiga)</label>
+                    <select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih atau Ketik Baru --</option></select>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-save">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px; vertical-align: -2px;">
+                            <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                        </svg>
+                        Simpan & Cetak Kuitansi
+                    </button>
+                </div>
+                <p class="loading" id="loadingText">Sedang memproses data ke server...</p>
+            </form>
+        </div>
     </div>
 
     <div id="print-area">
         <div class="header">BUKTI PEMBAYARAN</div>
-
         <div class="row"><div class="label">No</div><div class="separator">:</div><div class="value" id="p_no"></div></div>
         <div class="row"><div class="label">Kegiatan</div><div class="separator">:</div><div class="value">BELANJA OPERASIONAL SEKOLAH (BOS)</div></div>
         <div class="row"><div class="label">Kode Kegiatan</div><div class="separator">:</div><div class="value" id="p_kegiatan_kode"></div></div>
@@ -179,97 +320,64 @@
         <div class="row"><div class="label">Sebesar</div><div class="separator">:</div><div class="value" style="font-weight: bold;">Rp <span id="p_nominal" style="margin-left: 5px;"></span></div></div>
         <div class="row"><div class="label">Terbilang</div><div class="separator">:</div><div class="value" id="p_terbilang" style="font-style: italic;"></div></div>
         <div class="row"><div class="label">Untuk</div><div class="separator">:</div><div class="value" id="p_untuk"></div></div>
-
         <div class="ttd-container">
-            <div class="ttd-box-left">
-                <div>Setuju Dibayar,</div>
-                <div>Kepala SMPN 2 Kejayan</div>
-                <div class="ttd-space"></div>
-                <div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_kepala">...</div>
-                <div class="nowrap-text" id="lbl_nip_kepala">...</div>
-            </div>
-            <div class="ttd-box-center">
-                <div class="nowrap-text">Lunas dibayar Tanggal, <span id="p_tgl_1"></span></div>
-                <div>Bendahara BOS</div>
-                <div class="ttd-space"></div>
-                <div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_bendahara">...</div>
-                <div class="nowrap-text" id="lbl_nip_bendahara">...</div>
-            </div>
-            <div class="ttd-box-right">
-                <div class="nowrap-text">Kab. Pasuruan, <span id="p_tgl_2"></span></div>
-                <div>Yang Menerima</div>
-                <div class="ttd-space"></div>
-                <div class="bold" id="p_penerima" style="text-transform: uppercase;"></div>
-            </div>
+            <div class="ttd-box-left"><div>Setuju Dibayar,</div><div>Kepala SMPN 2 Kejayan</div><div class="ttd-space"></div><div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_kepala">...</div><div class="nowrap-text" id="lbl_nip_kepala">...</div></div>
+            <div class="ttd-box-center"><div class="nowrap-text">Lunas dibayar Tanggal, <span id="p_tgl_1"></span></div><div>Bendahara BOS</div><div class="ttd-space"></div><div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_bendahara">...</div><div class="nowrap-text" id="lbl_nip_bendahara">...</div></div>
+            <div class="ttd-box-right"><div class="nowrap-text">Kab. Pasuruan, <span id="p_tgl_2"></span></div><div>Yang Menerima</div><div class="ttd-space"></div><div class="bold" id="p_penerima" style="text-transform: uppercase;"></div></div>
         </div>
     </div>
 
     <script>
-        // === URL BACKEND ANDA SUDAH SAYA MASUKKAN DI SINI ===
+        // === MASUKKAN URL BACKEND GAS ANDA DI SINI ===
         const API_URL = "https://script.google.com/macros/s/AKfycbxpG5QV91fNjCNytxF5rJaLS9SZXCvw84syncm43jPb4v9etl5YXjS__XUv13vreix9vA/exec"; 
+        // =============================================
+        
         const CACHE_KEY = "kuitansi_master_data_v1";
-
         let defaultTerimaDari = "Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan";
 
         window.onload = function() {
-            document.getElementById('tanggal_lunas').valueAsDate = new Date(); // Set Tgl Hari Ini
+            document.getElementById('tanggal_lunas').valueAsDate = new Date();
             loadInitialData();
         };
 
-        // 1. LOAD DATA (CACHE FIRST)
+        // --- LOGIC CACHING & SYNC ---
         function loadInitialData() {
             let cachedData = localStorage.getItem(CACHE_KEY);
             let isCached = false;
-
             if (cachedData) {
-                console.log("Memuat dari Cache...");
                 let data = JSON.parse(cachedData);
                 isiDataAwal(data);
-                document.getElementById('statusData').innerText = "Data siap (Mode Cepat). Mengecek update...";
-                document.getElementById('statusData').style.color = "green";
+                document.getElementById('statusData').innerText = "SMPN 2 Kejayan - Data Siap.";
                 isCached = true;
             }
-            // Selalu update background
             fetchServer(isCached);
         }
 
         function fetchServer(isCached) {
             let btnSync = document.getElementById('btnSync');
             btnSync.classList.add('spinning');
-
-            fetch(API_URL)
-            .then(res => res.json())
-            .then(data => {
+            fetch(API_URL).then(res => res.json()).then(data => {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 isiDataAwal(data);
-                document.getElementById('statusData').innerText = "Data tersinkronisasi.";
-                document.getElementById('statusData').style.color = "#333";
+                document.getElementById('statusData').innerText = "SMPN 2 Kejayan - Tersinkronisasi.";
                 btnSync.classList.remove('spinning');
-            })
-            .catch(err => {
-                console.error(err);
-                if(!isCached) {
-                    document.getElementById('statusData').innerText = "Gagal koneksi server.";
-                    document.getElementById('statusData').style.color = "red";
-                }
+            }).catch(err => {
+                if(!isCached) document.getElementById('statusData').innerText = "Offline / Gagal Koneksi.";
                 btnSync.classList.remove('spinning');
             });
         }
 
         function forceSync() {
-            document.getElementById('statusData').innerText = "Sedang sinkronisasi...";
+            document.getElementById('statusData').innerText = "Menyinkronkan data...";
             fetchServer(true);
         }
 
         function isiDataAwal(data) {
-            // 1. Isi No Bukti Otomatis (Jika tidak sedang mengedit/isi manual)
             if (data.nextNo && document.getElementById('no_bukti').value === "") {
                 document.getElementById('no_bukti').value = data.nextNo;
-            } else if (data.nextNo && document.getElementById('no_bukti').placeholder.includes("nomor")) {
-                 document.getElementById('no_bukti').value = data.nextNo;
             }
-
-            // 2. Setup Dropdown (Simpan value lama biar ga kereset saat sync)
+            
+            // Save current selections
             let curKeg = $('#kode_kegiatan').val();
             let curBar = $('#kode_barang').val();
             let curPen = $('#nama_penerima').val();
@@ -282,16 +390,14 @@
             data.kegiatan.forEach(x => { selKeg.append(new Option(x, x)); });
             data.barang.forEach(x => { selBar.append(new Option(x, x)); });
             
-            // Init Select2
-            $('.select2-enable').select2({ placeholder: "-- Cari Data --", allowClear: true });
-            $('.select2-penerima').select2({ placeholder: "-- Pilih / Ketik Baru --", allowClear: true, tags: true });
+            $('.select2-enable').select2({ placeholder: "Cari Data...", allowClear: true });
+            $('.select2-penerima').select2({ placeholder: "Pilih / Ketik Nama Baru", allowClear: true, tags: true });
 
-            // Restore Value
+            // Restore
             if(curKeg) $('#kode_kegiatan').val(curKeg).trigger('change');
             if(curBar) $('#kode_barang').val(curBar).trigger('change');
             if(curPen) $('#nama_penerima').val(curPen).trigger('change');
 
-            // 3. Isi Pejabat
             if(data.pejabat) {
                 document.getElementById('input_nama_kepala').value = data.pejabat.kepala.nama;
                 document.getElementById('input_nip_kepala').value = data.pejabat.kepala.nip;
@@ -300,14 +406,14 @@
             }
         }
 
-        // FUNGSI CARI DATA LAMA (REVISI)
+        // --- FUNGSI OPERASIONAL ---
         function cariData() {
             let no = document.getElementById('no_bukti').value;
             if(!no) { alert("Masukkan No Bukti dulu!"); return; }
             
             let btn = document.querySelector('.btn-search');
             let oriText = btn.innerText;
-            btn.innerText = "..."; btn.disabled = true;
+            btn.innerText = "⌛"; btn.disabled = true;
 
             fetch(API_URL + "?action=search&no=" + encodeURIComponent(no))
             .then(res => res.json())
@@ -330,14 +436,77 @@
                         $('#nama_penerima').append(newOption).trigger('change');
                     }
                     alert("Data ditemukan! Silakan edit.");
-                } else {
-                    alert("Data tidak ditemukan!");
-                }
+                } else { alert("Data tidak ditemukan!"); }
             })
             .catch(err => { console.error(err); alert("Gagal mencari data."); btn.innerText = oriText; btn.disabled = false; });
         }
 
-        // Format Tanggal (2025-11-23 -> 23 November 2025)
+        function handleForm(e) {
+            e.preventDefault();
+            let btn = document.querySelector('.btn-save');
+            let loading = document.getElementById('loadingText');
+            
+            let valKeg = $('#kode_kegiatan').val();
+            let valBar = $('#kode_barang').val();
+            let valPen = $('#nama_penerima').val(); 
+
+            if(!valKeg || !valBar || !valPen) { alert("Mohon lengkapi semua data!"); return; }
+
+            // Preview
+            document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
+            document.getElementById('p_kegiatan_kode').innerText = valKeg;
+            document.getElementById('p_barang').innerText = valBar;
+            document.getElementById('p_terima').innerText = document.getElementById('terima_dari').value;
+            document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
+            document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
+            document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
+            
+            let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
+            document.getElementById('p_tgl_1').innerText = tglCantik;
+            document.getElementById('p_tgl_2').innerText = tglCantik; 
+            document.getElementById('p_penerima').innerText = valPen; 
+
+            document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
+            document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
+            document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
+            document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
+
+            // Kirim
+            btn.disabled = true; loading.style.display = 'block';
+            let formData = new FormData(document.getElementById('kuitansiForm'));
+            formData.set('kode_kegiatan', valKeg);
+            formData.set('kode_barang', valBar);
+            formData.set('nama_penerima', valPen);
+            formData.set('tanggal_lunas', tglCantik);
+
+            fetch(API_URL, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(response => {
+                loading.style.display = 'none'; btn.disabled = false;
+                if(response.result === 'success') { 
+                    if(response.mode === "Update") alert("Data Berhasil Diupdate!");
+                    window.print();
+                    resetFormInput(response.nextNo); 
+                    forceSync(); 
+                } 
+                else { alert("Gagal menyimpan: " + response.error); }
+            })
+            .catch(err => { console.error(err); alert("Terjadi kesalahan jaringan."); loading.style.display = 'none'; btn.disabled = false; });
+        }
+
+        function resetFormInput(nextNo) {
+            $('#kode_kegiatan').val(null).trigger('change');
+            $('#kode_barang').val(null).trigger('change');
+            $('#nama_penerima').val(null).trigger('change');
+            
+            document.getElementById('nominal').value = "";
+            document.getElementById('terbilang').value = "";
+            document.getElementById('untuk_pembayaran').value = "";
+            document.getElementById('no_bukti').value = nextNo;
+            document.getElementById('terima_dari').value = defaultTerimaDari;
+            document.getElementById('tanggal_lunas').valueAsDate = new Date();
+        }
+
         function formatTanggalIndo(isoDate) {
             if(!isoDate) return "";
             const dp = isoDate.split("-");
@@ -361,85 +530,6 @@
             else if(angka<1000000){kalimat=terbilang(Math.floor(angka/1000))+" Ribu"+terbilang(angka%1000);}
             else if(angka<1000000000){kalimat=terbilang(Math.floor(angka/1000000))+" Juta"+terbilang(angka%1000000);}
             return kalimat;
-        }
-
-        function handleForm(e) {
-            e.preventDefault();
-            let btn = document.querySelector('.btn-save');
-            let loading = document.getElementById('loadingText');
-            
-            let valKegiatan = $('#kode_kegiatan').val();
-            let valBarang = $('#kode_barang').val();
-            let valPenerima = $('#nama_penerima').val(); 
-
-            if(!valKegiatan || !valBarang || !valPenerima) { alert("Mohon lengkapi semua data!"); return; }
-
-            // --- ISI PREVIEW CETAK ---
-            document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
-            document.getElementById('p_kegiatan_kode').innerText = valKegiatan;
-            document.getElementById('p_barang').innerText = valBarang;
-            document.getElementById('p_terima').innerText = document.getElementById('terima_dari').value;
-            document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
-            document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
-            document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
-            
-            let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
-            document.getElementById('p_tgl_1').innerText = tglCantik;
-            document.getElementById('p_tgl_2').innerText = tglCantik; 
-            document.getElementById('p_penerima').innerText = valPenerima; 
-
-            // Pejabat
-            document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
-            document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
-            document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
-            document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
-
-            btn.disabled = true; loading.style.display = 'block';
-
-            let formData = new FormData(document.getElementById('kuitansiForm'));
-            formData.set('kode_kegiatan', valKegiatan);
-            formData.set('kode_barang', valBarang);
-            formData.set('nama_penerima', valPenerima);
-            formData.set('tanggal_lunas', tglCantik);
-
-            fetch(API_URL, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(response => {
-                loading.style.display = 'none'; btn.disabled = false;
-                if(response.result === 'success') { 
-                    if(response.mode === "Update") alert("Data Berhasil Diupdate!");
-                    
-                    window.print(); // 1. Cetak
-
-                    // 2. Reset Form & Set No Bukti Baru
-                    resetFormInput(response.nextNo); 
-                    forceSync(); // Update cache background
-                } 
-                else { alert("Gagal menyimpan: " + response.error); }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Terjadi kesalahan jaringan.");
-                loading.style.display = 'none'; btn.disabled = false;
-            });
-        }
-
-        // FUNGSI BERSIHKAN FORM & SIAP INPUT BARU
-        function resetFormInput(nextNo) {
-            $('#kode_kegiatan').val(null).trigger('change');
-            $('#kode_barang').val(null).trigger('change');
-            $('#nama_penerima').val(null).trigger('change');
-            
-            document.getElementById('nominal').value = "";
-            document.getElementById('terbilang').value = "";
-            document.getElementById('untuk_pembayaran').value = "";
-            
-            // Set No Bukti Baru (Auto Increment dari Backend)
-            document.getElementById('no_bukti').value = nextNo;
-            
-            // Reset Terima Dari & Tanggal
-            document.getElementById('terima_dari').value = defaultTerimaDari;
-            document.getElementById('tanggal_lunas').valueAsDate = new Date();
         }
     </script>
 </body>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Cetak Kuitansi BPU</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        /* CSS SAMA SEPERTI VERSI FINAL SEBELUMNYA */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .input-group { display: flex; gap: 5px; }
+        .btn-search { background: #17a2b8; color: white; border: none; border-radius: 4px; padding: 0 15px; cursor: pointer; font-weight: bold; }
+        .select2-container { width: 100% !important; }
+        .select2-container .select2-selection--single { height: 42px !important; padding: 5px; border: 1px solid #ddd; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 40px !important; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-save { background: #28a745; color: white; } .btn-save:hover { background: #218838; }
+        .loading { display: none; text-align: center; color: #007bff; font-weight: bold; margin-top: 10px; }
+
+        /* CSS CETAK FINAL */
+        #print-area { display: none; } 
+        @media print {
+            @page { size: A4; margin: 1cm; } 
+            body * { visibility: hidden; } .container, .btn-group { display: none; }
+            #print-area, #print-area * { visibility: visible; } 
+            #print-area { display: block; position: absolute; left: 0; top: 0; width: 100%; font-family: 'Times New Roman', Times, serif; font-size: 12pt; color: black; line-height: 1.5; }
+            .header { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 40px; font-size: 14pt; }
+            .row { display: flex; margin-bottom: 18px; }
+            .label { width: 160px; flex-shrink: 0; } .separator { width: 20px; flex-shrink: 0; text-align: center; } .value { flex: 1; text-align: justify; } 
+            .ttd-container { margin-top: 80px; display: flex; justify-content: space-between; text-align: center; width: 100%; font-size: 10pt; }
+            .nowrap-text { white-space: nowrap; }
+            .ttd-box-left { width: 22%; padding-right: 2px; } .ttd-box-center { width: 44%; padding: 0 2px; } .ttd-box-right { width: 34%; padding-left: 2px; }
+            .ttd-space { height: 75px; } .bold { font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="form-input">
+        <h2>Input Data Kuitansi BPU</h2>
+        <form id="kuitansiForm" onsubmit="handleForm(event)">
+            <div class="form-group">
+                <label>No. Bukti</label>
+                <div class="input-group">
+                    <input type="text" name="no_bukti" id="no_bukti" placeholder="Loading..." required style="font-weight: bold;">
+                    <button type="button" class="btn-search" onclick="cariData()">🔍 Cari</button>
+                </div>
+            </div>
+            <div class="form-group"><label>Kegiatan</label><select id="kode_kegiatan" name="kode_kegiatan" class="select2-enable" required><option value="">Memuat...</option></select></div>
+            <div class="form-group"><label>Kode Barang</label><select id="kode_barang" name="kode_barang" class="select2-enable" required><option value="">Memuat...</option></select></div>
+            <div class="form-group"><label>Terima Dari</label><input type="text" name="terima_dari" id="terima_dari" value="Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan"></div>
+            <div class="form-group"><label>Nominal (Rp)</label><input type="number" name="nominal" id="nominal" onkeyup="updateTerbilang()" placeholder="Contoh: 200000" required></div>
+            <div class="form-group"><label>Terbilang</label><input type="text" name="terbilang" id="terbilang" readonly style="background: #eee;"></div>
+            <div class="form-group"><label>Untuk Pembayaran</label><textarea name="untuk_pembayaran" id="untuk_pembayaran" rows="3" required></textarea></div>
+            <div class="form-group"><label>Tanggal Lunas</label><input type="date" name="tanggal_lunas" id="tanggal_lunas" required></div>
+            <hr>
+            <div class="form-group"><label>Menyetujui (Kepala Sekolah)</label><input type="text" id="input_nama_kepala" readonly style="background: #f9f9f9; font-weight: bold;"><input type="hidden" id="input_nip_kepala"></div>
+            <div class="form-group"><label>Bendahara BOS</label><input type="text" id="input_nama_bendahara" readonly style="background: #f9f9f9; font-weight: bold;"><input type="hidden" id="input_nip_bendahara"></div>
+            <div class="form-group"><label>Yang Menerima</label><select id="nama_penerima" name="nama_penerima" class="select2-penerima" required style="width: 100%;"><option value="">-- Pilih/Ketik --</option></select></div>
+            <hr>
+            <div class="btn-group"><button type="submit" class="btn-save">Simpan & Cetak</button></div>
+            <p class="loading" id="loadingText">Menghubungi Server...</p>
+        </form>
+    </div>
+
+    <div id="print-area">
+        <div class="header">BUKTI PEMBAYARAN</div>
+        <div class="row"><div class="label">No</div><div class="separator">:</div><div class="value" id="p_no"></div></div>
+        <div class="row"><div class="label">Kegiatan</div><div class="separator">:</div><div class="value">BELANJA OPERASIONAL SEKOLAH (BOS)</div></div>
+        <div class="row"><div class="label">Kode Kegiatan</div><div class="separator">:</div><div class="value" id="p_kegiatan_kode"></div></div>
+        <div class="row"><div class="label">Kode Barang</div><div class="separator">:</div><div class="value" id="p_barang"></div></div>
+        <br>
+        <div class="row"><div class="label">Terima Dari</div><div class="separator">:</div><div class="value" id="p_terima"></div></div>
+        <div class="row"><div class="label">Sebesar</div><div class="separator">:</div><div class="value" style="font-weight: bold;">Rp <span id="p_nominal" style="margin-left: 5px;"></span></div></div>
+        <div class="row"><div class="label">Terbilang</div><div class="separator">:</div><div class="value" id="p_terbilang" style="font-style: italic;"></div></div>
+        <div class="row"><div class="label">Untuk</div><div class="separator">:</div><div class="value" id="p_untuk"></div></div>
+        <div class="ttd-container">
+            <div class="ttd-box-left"><div>Setuju Dibayar,</div><div>Kepala SMPN 2 Kejayan</div><div class="ttd-space"></div><div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_kepala">...</div><div class="nowrap-text" id="lbl_nip_kepala">...</div></div>
+            <div class="ttd-box-center"><div class="nowrap-text">Lunas dibayar Tanggal, <span id="p_tgl_1"></span></div><div>Bendahara BOS</div><div class="ttd-space"></div><div class="bold nowrap-text" style="text-decoration: underline;" id="lbl_nama_bendahara">...</div><div class="nowrap-text" id="lbl_nip_bendahara">...</div></div>
+            <div class="ttd-box-right"><div class="nowrap-text">Kab. Pasuruan, <span id="p_tgl_2"></span></div><div>Yang Menerima</div><div class="ttd-space"></div><div class="bold" id="p_penerima" style="text-transform: uppercase;"></div></div>
+        </div>
+    </div>
+
+    <script>
+        // --- MASUKKAN URL ANDA DISINI ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbxpG5QV91fNjCNytxF5rJaLS9SZXCvw84syncm43jPb4v9etl5YXjS__XUv13vreix9vA/exec"; 
+        // --------------------------------
+
+        let defaultTerimaDari = "Kepala Sekolah SMPN 2 Kejayan Kecamatan Kejayan";
+
+        window.onload = function() {
+            document.getElementById('tanggal_lunas').valueAsDate = new Date();
+            loadInitialData();
+        };
+
+        // 1. Fetch Data Awal (Pengganti google.script.run)
+        function loadInitialData() {
+            fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                isiDataAwal(data);
+            });
+        }
+
+        function isiDataAwal(data) {
+            if (data.nextNo) document.getElementById('no_bukti').value = data.nextNo;
+
+            let selKeg = $('#kode_kegiatan').empty().append('<option value=""></option>');
+            let selBar = $('#kode_barang').empty().append('<option value=""></option>');
+            let selPen = $('#nama_penerima').empty().append('<option value=""></option>');
+            
+            data.kegiatan.forEach(x => selKeg.append(new Option(x, x)));
+            data.barang.forEach(x => selBar.append(new Option(x, x)));
+            if(data.penerima) data.penerima.forEach(x => selPen.append(new Option(x, x)));
+
+            $('.select2-enable').select2({ placeholder: "-- Cari --", allowClear: true });
+            $('.select2-penerima').select2({ placeholder: "-- Pilih/Ketik --", allowClear: true, tags: true });
+
+            if(data.pejabat) {
+                document.getElementById('input_nama_kepala').value = data.pejabat.kepala.nama;
+                document.getElementById('input_nip_kepala').value = data.pejabat.kepala.nip;
+                document.getElementById('input_nama_bendahara').value = data.pejabat.bendahara.nama;
+                document.getElementById('input_nip_bendahara').value = data.pejabat.bendahara.nip;
+            }
+        }
+
+        // 2. Cari Data
+        function cariData() {
+            let no = document.getElementById('no_bukti').value;
+            let btn = document.querySelector('.btn-search');
+            let ori = btn.innerText;
+            btn.innerText = "..."; btn.disabled = true;
+
+            fetch(API_URL + "?action=search&no=" + encodeURIComponent(no))
+            .then(res => res.json())
+            .then(resp => {
+                btn.innerText = ori; btn.disabled = false;
+                if(resp.status === 'found') {
+                    let d = resp.data;
+                    $('#kode_kegiatan').val(d.kode_kegiatan).trigger('change');
+                    $('#kode_barang').val(d.kode_barang).trigger('change');
+                    document.getElementById('terima_dari').value = d.terima_dari;
+                    document.getElementById('nominal').value = d.nominal;
+                    document.getElementById('terbilang').value = d.terbilang;
+                    document.getElementById('untuk_pembayaran').value = d.untuk_pembayaran;
+                    document.getElementById('tanggal_lunas').value = d.tanggal_lunas;
+                    
+                    if ($('#nama_penerima').find("option[value='" + d.nama_penerima + "']").length) {
+                        $('#nama_penerima').val(d.nama_penerima).trigger('change');
+                    } else { 
+                        $('#nama_penerima').append(new Option(d.nama_penerima, d.nama_penerima, true, true)).trigger('change');
+                    }
+                    alert("Data ditemukan!");
+                } else { alert("Tidak ditemukan."); }
+            });
+        }
+
+        // 3. Simpan Data (POST)
+        function handleForm(e) {
+            e.preventDefault();
+            let btn = document.querySelector('.btn-save');
+            let loading = document.getElementById('loadingText');
+            
+            // Preview
+            let valKeg = $('#kode_kegiatan').val();
+            let valBar = $('#kode_barang').val();
+            let valPen = $('#nama_penerima').val();
+            if(!valKeg || !valBar || !valPen) { alert("Lengkapi data!"); return; }
+
+            document.getElementById('p_no').innerText = document.getElementById('no_bukti').value;
+            document.getElementById('p_kegiatan_kode').innerText = valKeg;
+            document.getElementById('p_barang').innerText = valBar;
+            document.getElementById('p_terima').innerText = document.getElementById('terima_dari').value;
+            document.getElementById('p_nominal').innerText = new Intl.NumberFormat('id-ID').format(document.getElementById('nominal').value);
+            document.getElementById('p_terbilang').innerText = document.getElementById('terbilang').value;
+            document.getElementById('p_untuk').innerText = document.getElementById('untuk_pembayaran').value;
+            
+            let tglCantik = formatTanggalIndo(document.getElementById('tanggal_lunas').value);
+            document.getElementById('p_tgl_1').innerText = tglCantik;
+            document.getElementById('p_tgl_2').innerText = tglCantik;
+            document.getElementById('p_penerima').innerText = valPen;
+
+            document.getElementById('lbl_nama_kepala').innerText = document.getElementById('input_nama_kepala').value;
+            document.getElementById('lbl_nip_kepala').innerText = "NIP. " + document.getElementById('input_nip_kepala').value.trim();
+            document.getElementById('lbl_nama_bendahara').innerText = document.getElementById('input_nama_bendahara').value;
+            document.getElementById('lbl_nip_bendahara').innerText = "NIP. " + document.getElementById('input_nip_bendahara').value.trim();
+
+            // Kirim
+            btn.disabled = true; loading.style.display = 'block';
+            let form = document.getElementById('kuitansiForm');
+            let formData = new FormData(form);
+            // Tambah data select2 manual karena kadang tidak terambil formData
+            formData.set('kode_kegiatan', valKeg);
+            formData.set('kode_barang', valBar);
+            formData.set('nama_penerima', valPen);
+            // Ubah tanggal jadi format cantik untuk disimpan di sheet
+            formData.set('tanggal_lunas', tglCantik);
+
+            fetch(API_URL, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(response => {
+                loading.style.display = 'none'; btn.disabled = false;
+                if(response.result === 'success') {
+                    if(response.mode === "Update") alert("Data Updated!");
+                    window.print();
+                    resetFormInput(response.nextNo);
+                } else { alert("Error: " + response.error); }
+            });
+        }
+
+        function resetFormInput(nextNo) {
+            $('#kode_kegiatan').val(null).trigger('change');
+            $('#kode_barang').val(null).trigger('change');
+            $('#nama_penerima').val(null).trigger('change');
+            document.getElementById('nominal').value = "";
+            document.getElementById('terbilang').value = "";
+            document.getElementById('untuk_pembayaran').value = "";
+            document.getElementById('no_bukti').value = nextNo;
+            document.getElementById('terima_dari').value = defaultTerimaDari;
+            document.getElementById('tanggal_lunas').valueAsDate = new Date();
+        }
+
+        function updateTerbilang() {
+            let val = document.getElementById('nominal').value;
+            document.getElementById('terbilang').value = terbilang(val) + " Rupiah";
+        }
+
+        function formatTanggalIndo(isoDate) {
+            if(!isoDate) return "";
+            const dp = isoDate.split("-");
+            const bln = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            return `${dp[2]} ${bln[parseInt(dp[1])]} ${dp[0]}`;
+        }
+        
+        function terbilang(a){
+            var bil=['','Satu','Dua','Tiga','Empat','Lima','Enam','Tujuh','Delapan','Sembilan','Sepuluh','Sebelas'];
+            var kal=""; var ang=Math.abs(a);
+            if(ang<12){kal=" "+bil[ang];} else if(ang<20){kal=terbilang(ang-10)+" Belas";} else if(ang<100){kal=terbilang(Math.floor(ang/10))+" Puluh"+terbilang(ang%10);} else if(ang<200){kal=" Seratus"+terbilang(ang-100);} else if(ang<1000){kal=terbilang(Math.floor(ang/100))+" Ratus"+terbilang(ang%100);} else if(ang<1000000){kal=terbilang(Math.floor(ang/1000))+" Ribu"+terbilang(ang%1000);} else if(ang<1000000000){kal=terbilang(Math.floor(ang/1000000))+" Juta"+terbilang(ang%1000000);}
+            return kal;
+        }
+    </script>
+</body>
+</html>

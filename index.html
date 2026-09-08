@@ -411,19 +411,26 @@
             }
         }
 
-        // Event listener NIP otomatis berubah
+        // Event listener Jabatan & NIP Kepala Sekolah otomatis berubah
         $(document).on('change', '#input_nama_kepala', function() {
             if(!window.dataKaryawan) return;
             let namaDipilih = $(this).val();
             let dataOrang = window.dataKaryawan.find(x => x.nama === namaDipilih);
-            if(dataOrang) { document.getElementById('input_nip_kepala').value = dataOrang.nip; }
+            if(dataOrang) { 
+                document.getElementById('input_nip_kepala').value = dataOrang.nip;
+                document.getElementById('input_jabatan_kepala').value = dataOrang.jabatan; 
+            }
         });
 
+        // Event listener Jabatan & NIP Bendahara otomatis berubah
         $(document).on('change', '#input_nama_bendahara', function() {
             if(!window.dataKaryawan) return;
             let namaDipilih = $(this).val();
             let dataOrang = window.dataKaryawan.find(x => x.nama === namaDipilih);
-            if(dataOrang) { document.getElementById('input_nip_bendahara').value = dataOrang.nip; }
+            if(dataOrang) { 
+                document.getElementById('input_nip_bendahara').value = dataOrang.nip;
+                document.getElementById('input_jabatan_bendahara').value = dataOrang.jabatan; 
+            }
         });
 
         function cariData() {
